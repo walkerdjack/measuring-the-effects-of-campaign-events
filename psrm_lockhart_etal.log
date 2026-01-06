@@ -1,0 +1,2073 @@
+-----------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jdw223/Dropbox/S_YaleYouGov2024ElectionPanel/12_Research Papers/CampaignEventsExpectations/ps
+> rm_replication/psrm_lockhart_etal.log
+  log type:  text
+ opened on:   5 Jan 2026, 13:49:04
+
+. do "/Users/jdw223/Dropbox/S_YaleYouGov2024ElectionPanel/12_Research Papers/CampaignEventsExpectations/psrm_repl
+> ication/analysis.do"
+
+. /*-----------------------------------------------------------------------------
+> Public Replication Archive
+> 
+> Lockhart, M., Huber, G. A., Gerber, A. S., & Walker, J. D. II. [Date]. 
+> "Measuring the Effects of Campaign Events: Specifying and Comparing Estimates of the Effect of Trump's Convicti
+> on." Political Science Research and Methods.
+> ------------------------------------------------------------------------------*/
+. 
+. /*------------------------------------------------------------------------------
+> Table of contents:
+>         I.              Data preparation                        Line 17                 
+>         II.     Recode variables                        Line 23
+>         III.    Begin main text tables          Line 152
+>         IV.             Begin appendix tables           Line 264
+> ------------------------------------------------------------------------------*/
+. 
+. /*------------------------------------------------------------------------------
+> I. DATA PREPARATION
+> ------------------------------------------------------------------------------*/
+. 
+. use "psrm_lockhart_etal_public.dta", clear
+
+. 
+. /*------------------------------------------------------------------------------
+> II. RECODE VARIABLES
+> ------------------------------------------------------------------------------*/
+. 
+. * Recode variables to identify different types of Trump voters.
+. recode g4w16_vote_if_trump_guilty (1=0) (2=1) (3=0) (4=0) (5=0) (*=.), gen (vote_if_trump_guilty)
+(6,495 differences between g4w16_vote_if_trump_guilty and vote_if_trump_guilty)
+
+. label var vote_if_trump_guilty "If Donald Trump is found guilty of falsifying business records, who would you v
+> ote for in November?"
+note: label truncated to 80 characters
+
+. label define vote_if_trump_guilty_lab 0 "Joe Biden/Someone else/Not sure/Will not vote" 1 "Donald Trump"
+
+. label values vote_if_trump_guilty vote_if_trump_guilty_lab
+
+. 
+. recode g4w16_vote_if_trump_not_guilty (1=0) (2=1) (3=0) (4=0) (5=0) (*=.), gen (vote_if_trump_not_guilty)
+(6,500 differences between g4w16_vote_if_trump_not_guilty and vote_if_trump_not_guilty)
+
+. label var vote_if_trump_not_guilty "If Donald Trump is not found guilty of falsifying business records, who wou
+> ld you vote for in November?"
+note: label truncated to 80 characters
+
+. label define vote_if_trump_not_guilty_lab 0 "Joe Biden/Someone else/Not sure/Will not vote" 1 "Donald Trump"
+
+. label values vote_if_trump_not_guilty vote_if_trump_not_guilty_lab
+
+. 
+. gen conflicted_voters = (vote_if_trump_not_guilty == 1 & vote_if_trump_guilty == 0)
+
+. label var conflicted_voters "Conditional voter (binary)"
+
+. 
+. gen unconditional_voters = (vote_if_trump_not_guilty == 1 & vote_if_trump_guilty == 1)
+
+. label var unconditional_voters "Unconditional voter (binary)"
+
+. 
+. gen not_trump = (vote_if_trump_not_guilty == 0 & vote_if_trump_guilty == 0)
+
+. label var conflicted_voters "Not Trump voter (binary)"
+
+. 
+. * Recode vote choice for every survey week.
+. recode g4w4_heat_biden_trump (1=0) (2=1) (3=0) (4=0) (5=0) (*=.), gen(week_4_rc)
+(5,736 differences between g4w4_heat_biden_trump and week_4_rc)
+
+. label var week_4_rc "Week 4 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode b1_heat_biden_trump (1=0) (2=1) (3=0) (4=0) (5=0) (*=.), gen(b1_rc)
+(118,411 differences between b1_heat_biden_trump and b1_rc)
+
+. label var b1_rc "Baseline 1 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode g4w8_heat_biden_trump (1=0) (2=1) (3=0) (4=0) (5=0) (*=.), gen(week_8_rc)
+(5,655 differences between g4w8_heat_biden_trump and week_8_rc)
+
+. label var week_8_rc "Week 8 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode g4w12_presvote24 (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(week_12_rc)
+(5,547 differences between g4w12_presvote24 and week_12_rc)
+
+. label var week_12_rc "Week 12 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode b2_presvote24 (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(b2_rc)
+(78,253 differences between b2_presvote24 and b2_rc)
+
+. label var b2_rc "Baseline 2 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode g4w16_presvote24 (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(week_16_rc)
+(6,210 differences between g4w16_presvote24 and week_16_rc)
+
+. label var week_16_rc "Week 16 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode g4w20_presvote24 (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(week_20_rc)
+(6,012 differences between g4w20_presvote24 and week_20_rc)
+
+. label var week_20_rc "Week 20 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode deb_presvote24_pre (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(week_24_rc)
+(4,722 differences between deb_presvote24_pre and week_24_rc)
+
+. label var week_24_rc "Week 24 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode g4w28_presvote24h (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(week_28_rc)
+(5,397 differences between g4w28_presvote24h and week_28_rc)
+
+. label var week_28_rc "Week 28 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. recode g4w32_presvote24h (1=0) (2=1) (11=0) (12=0) (13=0) (88=0) (98=0) (99=0) (*=.), gen(week_32_rc)
+(5,418 differences between g4w32_presvote24h and week_32_rc)
+
+. label var week_32_rc "Week 32 Vote Choice (1=Trump, 0=Everything else)"
+
+. 
+. * Recode additional control variables.
+. recode g4w20_baseline_presvote20post (1=0) (2=1) (3=0) (4=0) (5=0) (6=0) (*=.), gen(g4w20_baseline_presvote20po
+> st_rc)
+(6,282 differences between g4w20_baseline_presvote20post and g4w20_baseline_presvote20post_rc)
+
+. label define lab_1 1 "2020 Vote Choice = Donald Trump" 0 "2020 Vote Choice = Everything else"
+
+. label values g4w20_baseline_presvote20post_rc lab_1
+
+. 
+. recode g4w20_baseline_pid7 (1=1) (2=2) (3=3) (4=4) (5=5) (6=6) (7=7) (8=8) (*=.), gen(g4w20_baseline_pid7_rc)
+(0 differences between g4w20_baseline_pid7 and g4w20_baseline_pid7_rc)
+
+. label define lab_2 1 "Party ID = Strong Democrat" 2 "Party ID = Not very strong Democrat" 3 "Lean Democrat" 4 "
+> Independent" 5 "Lean Republican" 6 "Not very strong Republican" 7 "Strong Republican" 8 "Not sure"
+
+. label values g4w20_baseline_pid7_rc lab_2
+
+. 
+. recode g4w20_baseline_age4 (1=1) (2=2) (3=3) (4=4) (*=.), gen (g4w20_baseline_age4_rc)
+(0 differences between g4w20_baseline_age4 and g4w20_baseline_age4_rc)
+
+. label define lab_3 1 "Age = Under 30" 2 "Age = 30-44" 3 "45-64" 4 "65+"
+
+. label values g4w20_baseline_age4_rc lab_3
+
+. 
+. recode g4w20_baseline_educ4 (1=1) (2=2) (3=3) (4=4) (*=.), gen (g4w20_baseline_educ4_rc)
+(0 differences between g4w20_baseline_educ4 and g4w20_baseline_educ4_rc)
+
+. label define lab_4 1 "Education level = HS or less" 2 "Education level = Some college" 3 "College grad" 4 "Post
+> grad"
+
+. label values g4w20_baseline_educ4_rc lab_4
+
+. 
+. recode g4w20_baseline_race4 (1=1) (2=2) (3=3) (4=4) (*=.), gen (g4w20_baseline_race4_rc)
+(0 differences between g4w20_baseline_race4 and g4w20_baseline_race4_rc)
+
+. label define lab_5 1 "Race/ethnicity = White" 2 "Race/ethnicity = Black" 3 "Hispanic" 4 "Other"
+
+. label values g4w20_baseline_race4_rc lab_5
+
+. 
+. * Recode survey times.
+. gen pre_guilty = (g4w20_trump_hush_verdict_announc == 2)
+
+. gen post_guilty = (g4w20_trump_hush_verdict_announc == 1)
+
+. 
+. * Generate week 16 placebo for week 20 timing.
+. generate double week16time = g4w16_starttime + mdyhms(1,1,1960,0,0,0)
+(192,136 missing values generated)
+
+. format week16time %tc
+
+. list week16time in 1/6
+
+     +----------+
+     | week16~e |
+     |----------|
+  1. |        . |
+  2. |        . |
+  3. |        . |
+  4. |        . |
+  5. |        . |
+     |----------|
+  6. |        . |
+     +----------+
+
+. gen day345 = week16time > mdyhms(5,03,2024,0,0,0)
+
+. 
+. * Generate indicators for when respondents took survey.
+. gen took_week_4 = week_4_rc != .
+
+. label var took_week_4 "Week 4 Respondent"
+
+. gen took_week_8 = week_8_rc != .
+
+. label var took_week_8 "Week 8 Respondent"
+
+. gen took_week_12 = week_12_rc != .
+
+. label var took_week_12 "Week 12 Respondent"
+
+. gen took_week_20 = week_20_rc != .
+
+. label var took_week_20 "Week 20 Respondent"
+
+. gen took_week_24 = week_24_rc != .
+
+. label var took_week_24 "Week 24 Respondent"
+
+. gen took_week_28 = week_28_rc != .
+
+. label var took_week_28 "Week 28 Respondent"
+
+. 
+. * Recode variables related to change in vote choice.
+. gen actual_change = week_20_rc - week_16_rc
+(193,421 missing values generated)
+
+. label define actual_change_lab -1 ""
+
+. 
+. recode g4w20_trump_hush_trial_vote (1=2) (2=1) (3=0) (4=-1) (5=-2) (6=0) (*=.), gen(reported_change_rc)
+(4,042 differences between g4w20_trump_hush_trial_vote and reported_change_rc)
+
+. label var reported_change_rc "Week 20: How Conviction Changed Trump Support (-2-2)"
+
+. 
+. * Generate measure of "Trumpiness," or how often respondent says they would support Trump.
+. gen week_4_trump = (week_4_rc == 1)
+
+. gen b1_trump = (b1_rc == 1)
+
+. gen week_8_trump = (week_8_rc == 1)
+
+. gen week_12_trump = (week_12_rc == 1)
+
+. gen b2_trump = (b2_rc == 1)
+
+. 
+. egen weeks_support_trump = rowtotal(week_4_trump b1_trump week_8_trump week_12_trump b2_trump)
+
+. gen weeks_answered = (week_4_rc!=.) + (b1_rc!=.) + (week_8_rc!=.) + (week_12_rc!=.) + (b2_rc!=.)
+
+. gen prop_weeks_trump = weeks_support_trump/weeks_answered
+(69,412 missing values generated)
+
+. 
+. gen voterstatus = 1 if conflicted_voters==1
+(198,383 missing values generated)
+
+. replace voterstatus = 2 if unconditional_voters==1
+(2,316 real changes made)
+
+. replace voterstatus = 3 if not_trump==1
+(3,859 real changes made)
+
+. 
+. label define labvoterstatus 1 "Conditional Trump Supporter" 2 "Unconditional Trump Supporter" 3 "Everyone else"
+
+. label values voterstatus labvoterstatus
+
+. 
+. * Recode prediction variable.
+. recode g4w16_trump_convicted_manhattan (1=1) (2=0) (3=0.5) (*=.), gen(week16_p)
+(4,258 differences between g4w16_trump_convicted_manhattan and week16_p)
+
+. label var week16_p "Do you think Donald Trump will be convicted? (Week 16 binary)"
+
+. 
+. /*------------------------------------------------------------------------------
+> III. BEGIN MAIN TEXT TABLES
+> ------------------------------------------------------------------------------*/
+. 
+. * Table 1.
+. 
+. preserve
+
+.         * Col. 1. "Weighted."
+. reg week_20_rc post_guilty [aweight=g4w20_weight] if week_16_rc == 1, robust
+(sum of wgt is 1,742.00846807212)
+
+Linear regression                               Number of obs     =      2,113
+                                                F(1, 2111)        =       0.70
+                                                Prob > F          =     0.4043
+                                                R-squared         =     0.0010
+                                                Root MSE          =     .21775
+
+------------------------------------------------------------------------------
+             |               Robust
+  week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |   .0146248   .0175345     0.83   0.404     -.019762    .0490116
+       _cons |   .9407685   .0148919    63.17   0.000     .9115641    .9699729
+------------------------------------------------------------------------------
+
+. eststo tab1_col1
+
+.         * Col. 2. "Unweighted."
+. reg week_20_rc post_guilty if week_16_rc == 1, robust
+
+Linear regression                               Number of obs     =      2,113
+                                                F(1, 2111)        =       0.31
+                                                Prob > F          =     0.5795
+                                                R-squared         =     0.0002
+                                                Root MSE          =     .18863
+
+------------------------------------------------------------------------------
+             |               Robust
+  week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |   .0047951   .0086523     0.55   0.580    -.0121728    .0217631
+       _cons |   .9600515   .0070335   136.50   0.000     .9462582    .9738449
+------------------------------------------------------------------------------
+
+. eststo tab1_col2
+
+.         * Col. 3. "With controls."
+. reg week_20_rc post_guilty g4w20_baseline_presvote20post_rc g4w20_baseline_pid7_rc g4w20_baseline_age4_rc g4w20
+> _baseline_educ4_rc g4w20_baseline_race4_rc [aweight=g4w20_weight] if week_16_rc == 1, robust
+(sum of wgt is 1,741.52210733912)
+
+Linear regression                               Number of obs     =      2,112
+                                                F(6, 2105)        =       4.43
+                                                Prob > F          =     0.0002
+                                                R-squared         =     0.1127
+                                                Root MSE          =     .20549
+
+--------------------------------------------------------------------------------------------------
+                                 |               Robust
+                      week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                     post_guilty |   .0133194   .0174731     0.76   0.446     -.020947    .0475858
+g4w20_baseline_presvote20post_rc |   .0911744   .0281032     3.24   0.001     .0360615    .1462872
+          g4w20_baseline_pid7_rc |   .0333174   .0087712     3.80   0.000     .0161163    .0505185
+          g4w20_baseline_age4_rc |   .0236059   .0114423     2.06   0.039     .0011666    .0460453
+         g4w20_baseline_educ4_rc |  -.0019577   .0062799    -0.31   0.755    -.0142731    .0103577
+         g4w20_baseline_race4_rc |   .0163946   .0084804     1.93   0.053    -.0002363    .0330256
+                           _cons |   .5825912   .0892123     6.53   0.000     .4076376    .7575447
+--------------------------------------------------------------------------------------------------
+
+. eststo tab1_col3
+
+.         * Combine.
+. esttab tab1_col1 tab1_col2 tab1_col3 using "tab1.rtf", ///
+>     replace ///
+>     title("Table 1. Linear regression of week 20 vote choice on post-verdict respondents, among week 16 Trump s
+> upporters with robust standard errors. Weighted analysis.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>     drop(g4w20_baseline_*) ///
+>         varlabels(post_guilty "Post-Guilty Verdict" ///
+>               _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Weighted" "Unweighted" "With controls") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file tab1.rtf not found)
+(output written to tab1.rtf)
+
+. restore
+
+. 
+. * Table 2.
+. 
+. preserve
+
+.         * Col. 1. "Percent supporting Trump in Week 20." (Note that the below table includes columns and rows o
+> mitted from the main text. Here, column 2 ("0") is the column of interest.)
+. asdoc tab reported_change_rc actual_change if week_16_rc == 1 [aweight=g4w20_weight], row replace save(tab2_col
+> 1.doc)
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+  Week 20: |
+       How |
+Conviction |
+   Changed |
+     Trump |
+   Support |     actual_change
+    (-2-2) |        -1          0 |     Total
+-----------+----------------------+----------
+        -2 | 1.4964235   1.203895 | 2.7003185 
+           |     55.42      44.58 |    100.00 
+-----------+----------------------+----------
+        -1 | 2.0078153  24.459542 |26.4673577 
+           |      7.59      92.41 |    100.00 
+-----------+----------------------+----------
+         0 | 48.058394   401.0844 | 449.14279 
+           |     10.70      89.30 |    100.00 
+-----------+----------------------+----------
+         1 | 4.6411042  41.194757 | 45.835861 
+           |     10.13      89.87 |    100.00 
+-----------+----------------------+----------
+         2 | 3.3700889 798.483579 |801.853668 
+           |      0.42      99.58 |    100.00 
+-----------+----------------------+----------
+     Total | 59.573826  1,266.426 |     1,326 
+           |      4.49      95.51 |    100.00 
+Click to Open File:  tab2_col1.doc
+
+.         * Col. 2. "Percent of sample." (Note that the below table was combined manually with the above table in
+>  the main text for formatting flexibility.)
+. scalar row1_total = 2.70
+
+. scalar row2_total = 26.47
+
+. scalar row3_total = 449.14
+
+. scalar row4_total = 45.84
+
+. scalar row5_total = 801.85
+
+. scalar total_sample = 1326
+
+. 
+. scalar prop_row1 = row1_total / total_sample
+
+. scalar prop_row2 = row2_total / total_sample
+
+. scalar prop_row3 = row3_total / total_sample
+
+. scalar prop_row4 = row4_total / total_sample
+
+. scalar prop_row5 = row5_total / total_sample
+
+. 
+. clear
+
+. 
+. set obs 5
+Number of observations (_N) was 0, now 5.
+
+. gen str20 category = ""
+(5 missing values generated)
+
+. gen proportion = .
+(5 missing values generated)
+
+. 
+. replace category = "Much less likely" in 1
+(1 real change made)
+
+. replace category = "Somewhat less likely" in 2
+(1 real change made)
+
+. replace category = "No change" in 3
+(1 real change made)
+
+. replace category = "Somewhat more likely" in 4
+(1 real change made)
+
+. replace category = "Much more likely" in 5
+(1 real change made)
+
+. 
+. replace proportion = `=prop_row1' in 1
+(1 real change made)
+
+. replace proportion = `=prop_row2' in 2
+(1 real change made)
+
+. replace proportion = `=prop_row3' in 3
+(1 real change made)
+
+. replace proportion = `=prop_row4' in 4
+(1 real change made)
+
+. replace proportion = `=prop_row5' in 5
+(1 real change made)
+
+. 
+. asdoc list category proportion, replace save(tab2_col2.doc)
+
+     +---------------------------------+
+     |             category   propor~n |
+     |---------------------------------|
+  1. |     Much less likely   .0020362 |
+  2. | Somewhat less likely   .0199623 |
+  3. |            No change   .3387179 |
+  4. | Somewhat more likely   .0345701 |
+  5. |     Much more likely   .6047134 |
+     +---------------------------------+
+Click to Open File:  tab2_col2.doc
+
+. 
+. restore
+
+. 
+. * Table 3.
+. 
+.         * Col. 2 "Percent (among week 16 Trump supporters)." (Note that the below table includes columns omitte
+> d from the main text. Here, column 2 ("Percent") is the column of interest. Note also that "Everyone else" is r
+> elabeled to "Reverse Conditional." Finally, two columns are manually added for explanatory purposes: "Vote if g
+> uilty" and "Vote if not guilty.")
+. preserve
+
+. asdoc tab voterstatus if week_16_rc==1 [aweight=g4w16_weight], replace save(tab3.doc)
+
+                  voterstatus |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+  Conditional Trump Supporter | 252.588507       10.42       10.42
+Unconditional Trump Supporter | 2,120.5374       87.44       97.86
+                Everyone else | 51.8740516        2.14      100.00
+------------------------------+-----------------------------------
+                        Total |      2,425      100.00
+Click to Open File:  tab3.doc
+
+. restore
+
+. 
+. * Table 4.
+. 
+. preserve
+
+.         * Col. 1. "Causal Estimate: Week 20 Vote Choice."
+. reg week_20_rc post_guilty##i.conflicted_voters [aweight=g4w20_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,840.26404864619)
+
+Linear regression                               Number of obs     =      2,207
+                                                F(3, 2203)        =      11.59
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1133
+                                                Root MSE          =     .25174
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                   week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |   .0174966   .0192706     0.91   0.364    -.0202938     .055287
+          1.conflicted_voters |  -.2856652   .0816255    -3.50   0.000    -.4457362   -.1255942
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |   .0053046   .1017945     0.05   0.958    -.1943185    .2049278
+                              |
+                        _cons |   .9436155   .0164011    57.53   0.000     .9114523    .9757787
+-----------------------------------------------------------------------------------------------
+
+. eststo tab4_col1
+
+.         * Col. 2. "Placebo Outcome: Week 4 Vote Choice."
+. reg week_4_rc post_guilty##i.conflicted_voters [aweight = g4w4_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,406.40339593118)
+
+Linear regression                               Number of obs     =      1,817
+                                                F(3, 1813)        =       7.26
+                                                Prob > F          =     0.0001
+                                                R-squared         =     0.0574
+                                                Root MSE          =     .18098
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                    week_4_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |    .000899   .0076633     0.12   0.907    -.0141308    .0159289
+          1.conflicted_voters |  -.1366904   .0395018    -3.46   0.001    -.2141643   -.0592165
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |  -.0219516   .0644535    -0.34   0.733    -.1483625    .1044594
+                              |
+                        _cons |   .9785074   .0059511   164.42   0.000     .9668356    .9901792
+-----------------------------------------------------------------------------------------------
+
+. eststo tab4_col2
+
+.         * Col. 3. "Placebo Outcome: Week 8 Vote Choice."
+. reg week_8_rc post_guilty##i.conflicted_voters [aweight = g4w8_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,454.74123204628)
+
+Linear regression                               Number of obs     =      1,823
+                                                F(3, 1819)        =       5.53
+                                                Prob > F          =     0.0009
+                                                R-squared         =     0.0880
+                                                Root MSE          =     .18858
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                    week_8_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |   .0131008   .0090407     1.45   0.147    -.0046304     .030832
+          1.conflicted_voters |  -.2158497   .0773474    -2.79   0.005    -.3675488   -.0641507
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |   .0798719   .0948635     0.84   0.400    -.1061809    .2659248
+                              |
+                        _cons |   .9715771   .0080585   120.57   0.000     .9557722     .987382
+-----------------------------------------------------------------------------------------------
+
+. eststo tab4_col3
+
+.         * Col. 4. "Placebo Outcome: Week 12 Vote Choice."
+. reg week_12_rc post_guilty##i.conflicted_voters [aweight=g4w12_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,330.28772574652)
+
+Linear regression                               Number of obs     =      1,617
+                                                F(3, 1613)        =      11.74
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1031
+                                                Root MSE          =     .25861
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                   week_12_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |   .0196133   .0168376     1.16   0.244    -.0134126    .0526392
+          1.conflicted_voters |  -.2910699   .0738192    -3.94   0.000    -.4358615   -.1462783
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |   .0501606   .0940769     0.53   0.594    -.1343652    .2346864
+                              |
+                        _cons |   .9395541   .0147897    63.53   0.000      .910545    .9685632
+-----------------------------------------------------------------------------------------------
+
+. eststo tab4_col4
+
+.         * Combine.
+. esttab tab4_col1 tab4_col2 tab4_col3 tab4_col4 using "tab4.rtf", ///
+>     replace ///
+>     title("Table 4. Combined test and placebo tests of conditional Trump support on vote choice among week 16 T
+> rump supporters with robust standard errors. Weighted analysis.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>         varlabels(1.post_guilty "Post-Guilty Verdict" ///
+>               1.conflicted_voters "Conditional Supporter" ///
+>               1.post_guilty#1.conflicted_voters "Post-Guilty Verdict X Conditional Support" ///
+>                                 _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Causal Estimate: Week 20 Vote Choice" "Placebo Outcome: Week 4 Vote Choice" "Week 8 Vote Choic
+> e" "Placebo Outcome: Week 12 Vote Choice") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file tab4.rtf not found)
+(output written to tab4.rtf)
+
+. restore
+
+. 
+. /*------------------------------------------------------------------------------
+> III. BEGIN APPENDIX TABLES
+> ------------------------------------------------------------------------------*/
+. 
+. * Table A1. (Note that this table was computed directly in the Stata console and input manually in the main tex
+> t for formatting flexibility. It is pasted below and commented out.)
+. 
+. preserve
+
+.         * Col. 1. "Absolute value of vote choice if guilty-week 16 vote choice: y*(1)-week 16."
+. gen y1_week16 = abs(vote_if_trump_guilty - week_16_rc)
+(192,469 missing values generated)
+
+. label var y1_week16 "y(1)-week 16 vote choice"
+
+.         * Col. 2. "Absolute value of vote choice if not guilty-week 16 vote choice: y*(0)-week 16."
+. gen y0_week16 = abs(vote_if_trump_not_guilty - week_16_rc)
+(192,464 missing values generated)
+
+. label var y0_week16 "y(0)-week 16 vote choice"
+
+.         * Col. 3. "Difference."
+. gen diff_y1_y0_week16 = y1_week16 - y0_week16
+(192,478 missing values generated)
+
+. label var diff_y1_y0_week16 "Difference"
+
+.         * Combine.
+. estpost tabstat y1_week16 y0_week16 diff_y1_y0_week16, by(week16_p) stats(mean) columns(var)
+
+Summary statistics: mean
+     for variables: y1_week16 y0_week16 diff_y1_y0_week16
+  by categories of: week16_p
+
+    week16_p | e(y1_~16)  e(y0_~16)  e(dif~16) 
+-------------+---------------------------------
+           0 |  .0734206    .035877   .0376497 
+  _missing_5 |  .0687057   .0407621   .0279751 
+           1 |  .0240964   .0175682   .0064905 
+-------------+---------------------------------
+       Total |  .0544482     .03125   .0232068 
+
+category labels saved in macro e(labels)
+
+. /*
+>     week16_p | e(y1_~16)  e(y0_~16)  e(dif~16) 
+> -------------+---------------------------------
+>            0 |  .0734206    .035877   .0376497 
+>   _missing_5 |  .0687057   .0407621   .0279751 
+>            1 |  .0240964   .0175682   .0064905 
+> -------------+---------------------------------
+>        Total |  .0544482     .03125   .0232068 
+> */
+. restore
+
+. 
+. * Table A2.
+. 
+. preserve
+
+.         * Analyze full sample.
+. keep if week_16_rc!=. & week_20_rc !=.
+(193,421 observations deleted)
+
+. gen vote_16 = week_16_rc
+
+. gen vote_20 = week_20_rc
+
+. version 18: reshape long vote_, i(newid) j(time)   
+(j = 16 20)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations            5,237   ->   10,474      
+Number of variables                  77   ->   77          
+j variable (2 values)                     ->   time
+xij variables:
+                        vote_16 vote_20   ->   vote_
+-----------------------------------------------------------------------------
+
+. tab vote_ time
+
+           |         time
+     vote_ |        16         20 |     Total
+-----------+----------------------+----------
+         0 |     3,124      3,107 |     6,231 
+         1 |     2,113      2,130 |     4,243 
+-----------+----------------------+----------
+     Total |     5,237      5,237 |    10,474 
+
+.         * Genereate post-treatment indicator.
+. gen post = (time == 20)
+
+.         * Col. 1. "DiD Weighted."
+. reg vote_ i.post_guilty##i.post [aweight=g4w20_weight], cluster(newid)
+(sum of wgt is 8,354.71331611583)
+
+Linear regression                               Number of obs     =     10,474
+                                                F(3, 5236)        =       0.32
+                                                Prob > F          =     0.8108
+                                                R-squared         =     0.0002
+                                                Root MSE          =     .49285
+
+                                  (Std. err. adjusted for 5,237 clusters in newid)
+----------------------------------------------------------------------------------
+                 |               Robust
+           vote_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   1.post_guilty |   .0120441    .022248     0.54   0.588    -.0315713    .0556596
+          1.post |   -.006161   .0091342    -0.67   0.500     -.024068    .0117459
+                 |
+post_guilty#post |
+            1 1  |   .0050502   .0103098     0.49   0.624    -.0151612    .0252617
+                 |
+           _cons |   .4094171   .0179928    22.75   0.000     .3741437    .4446906
+----------------------------------------------------------------------------------
+
+. eststo taba2_col1
+
+. estadd scalar obs = e(N_clust)
+
+added scalar:
+                e(obs) =  5237
+
+.         * Col. 2. "DiD Unweighted."
+. reg vote_ i.post_guilty##i.post , cluster(newid)
+
+Linear regression                               Number of obs     =     10,474
+                                                F(3, 5236)        =       2.02
+                                                Prob > F          =     0.1086
+                                                R-squared         =     0.0001
+                                                Root MSE          =     .49098
+
+                                  (Std. err. adjusted for 5,237 clusters in newid)
+----------------------------------------------------------------------------------
+                 |               Robust
+           vote_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+   1.post_guilty |  -.0128047   .0141461    -0.91   0.365    -.0405371    .0149276
+          1.post |  -.0037135   .0039343    -0.94   0.345    -.0114265    .0039994
+                 |
+post_guilty#post |
+            1 1  |   .0108734   .0050961     2.13   0.033     .0008829     .020864
+                 |
+           _cons |   .4116711   .0113379    36.31   0.000      .389444    .4338981
+----------------------------------------------------------------------------------
+
+. eststo taba2_col2
+
+. estadd scalar obs = e(N_clust)
+
+added scalar:
+                e(obs) =  5237
+
+.         * Col. 3. "DiD Weighted w/ Controls."
+. reg vote_ i.post_guilty##i.post i.g4w20_baseline_presvote20post_rc i.g4w20_baseline_pid7_rc i.g4w20_baseline_ag
+> e4_rc i.g4w20_baseline_educ4_rc i.g4w20_baseline_race4_rc [aweight=g4w20_weight], cluster(newid)
+(sum of wgt is 8,353.74059464984)
+
+Linear regression                               Number of obs     =     10,472
+                                                F(20, 5235)       =     598.55
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.6670
+                                                Root MSE          =     .28467
+
+                                                      (Std. err. adjusted for 5,236 clusters in newid)
+------------------------------------------------------------------------------------------------------
+                                     |               Robust
+                               vote_ | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------------------------+----------------------------------------------------------------
+                       1.post_guilty |  -.0151021   .0141804    -1.06   0.287    -.0429016    .0126974
+                              1.post |   -.006161   .0091417    -0.67   0.500    -.0240825    .0117604
+                                     |
+                    post_guilty#post |
+                                1 1  |     .00505   .0103186     0.49   0.625    -.0151787    .0252787
+                                     |
+    g4w20_baseline_presvote20post_rc |
+    2020 Vote Choice = Donald Trump  |   .3516051   .0315286    11.15   0.000      .289796    .4134143
+                                     |
+              g4w20_baseline_pid7_rc |
+Party ID = Not very strong Democrat  |   .0445797   .0208501     2.14   0.033     .0037048    .0854545
+                      Lean Democrat  |   .0069845   .0149948     0.47   0.641    -.0224116    .0363806
+                        Independent  |   .1416237   .0244858     5.78   0.000     .0936213    .1896261
+                    Lean Republican  |   .4911085   .0393943    12.47   0.000     .4138792    .5683378
+         Not very strong Republican  |   .4263494   .0406554    10.49   0.000     .3466478     .506051
+                  Strong Republican  |   .6086563    .034692    17.54   0.000     .5406456     .676667
+                           Not sure  |   .1127987   .0695969     1.62   0.105    -.0236402    .2492376
+                                     |
+              g4w20_baseline_age4_rc |
+                        Age = 30-44  |   .0626008   .0255574     2.45   0.014     .0124977     .112704
+                              45-64  |    .049042   .0231152     2.12   0.034     .0037266    .0943573
+                                65+  |   .0189817    .022322     0.85   0.395    -.0247788    .0627422
+                                     |
+             g4w20_baseline_educ4_rc |
+     Education level = Some college  |    -.02685   .0174741    -1.54   0.124    -.0611064    .0074065
+                       College grad  |  -.0430261   .0171884    -2.50   0.012    -.0767226   -.0093296
+                           Postgrad  |  -.0775698   .0188315    -4.12   0.000    -.1144874   -.0406522
+                                     |
+             g4w20_baseline_race4_rc |
+             Race/ethnicity = Black  |  -.0354212   .0189659    -1.87   0.062    -.0726022    .0017598
+                           Hispanic  |   .0460977   .0225498     2.04   0.041     .0018907    .0903046
+                              Other  |   .0035848   .0220391     0.16   0.871     -.039621    .0467905
+                                     |
+                               _cons |   .0257459   .0240196     1.07   0.284    -.0213426    .0728343
+------------------------------------------------------------------------------------------------------
+
+. eststo taba2_col3
+
+. estadd scalar obs = e(N_clust)
+
+added scalar:
+                e(obs) =  5236
+
+.         * Combine.
+. esttab taba2_col1 taba2_col2 taba2_col3 using "taba2.rtf", ///
+>     replace ///
+>     title("Linear regression of vote choice by week and post-verdict indicator, with robust standard errors.") 
+> ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>         stats(r2_a obs, fmt(%9.3f %9.0f) labels("Adj R-squared" "N")) ///
+>         varlabels(1.post_guilty "Post-Guilty Verdict" ///
+>                                 1.post "Week 20 Response" ///
+>                                 1.post_guilty#1.post "Post-Guilty X Week 20" ///
+>               _cons "Constant")  ///
+>          keep(1.post_guilty 1.post 1.post_guilty#1.post _cons)   ///
+>     varwidth(30) ///
+>         mtitles("DiD Weighted" "DiD Unweighted" "DiD Weighted w/ Controls") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels      
+(file taba2.rtf not found)
+(output written to taba2.rtf)
+
+. restore
+
+. 
+. * Table A3.
+. 
+. preserve
+
+. reg week_20_rc post_guilty g4w20_baseline_presvote20post_rc g4w20_baseline_pid7_rc g4w20_baseline_age4_rc g4w20
+> _baseline_educ4_rc g4w20_baseline_race4_rc [aweight=g4w20_weight] if week_16_rc == 1, robust
+(sum of wgt is 1,741.52210733912)
+
+Linear regression                               Number of obs     =      2,112
+                                                F(6, 2105)        =       4.43
+                                                Prob > F          =     0.0002
+                                                R-squared         =     0.1127
+                                                Root MSE          =     .20549
+
+--------------------------------------------------------------------------------------------------
+                                 |               Robust
+                      week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+---------------------------------+----------------------------------------------------------------
+                     post_guilty |   .0133194   .0174731     0.76   0.446     -.020947    .0475858
+g4w20_baseline_presvote20post_rc |   .0911744   .0281032     3.24   0.001     .0360615    .1462872
+          g4w20_baseline_pid7_rc |   .0333174   .0087712     3.80   0.000     .0161163    .0505185
+          g4w20_baseline_age4_rc |   .0236059   .0114423     2.06   0.039     .0011666    .0460453
+         g4w20_baseline_educ4_rc |  -.0019577   .0062799    -0.31   0.755    -.0142731    .0103577
+         g4w20_baseline_race4_rc |   .0163946   .0084804     1.93   0.053    -.0002363    .0330256
+                           _cons |   .5825912   .0892123     6.53   0.000     .4076376    .7575447
+--------------------------------------------------------------------------------------------------
+
+. eststo taba3
+
+. 
+. esttab taba3 using "taba3.rtf", ///
+>     replace ///
+>     title("Linear regression of week 20 vote choice on post-verdict respondents, among week 16 Trump supporters
+>  with robust standard errors, weighted. With baseline controls.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>         varlabels(post_guilty "Post-Guilty Verdict" ///
+>                         g4w20_baseline_presvote20post_rc "2020 Vote Choice" ///
+>                         g4w20_baseline_pid7_rc "Party ID" ///
+>                         g4w20_baseline_age4_rc "Age" ///
+>                         g4w20_baseline_educ4_rc "Education level" ///
+>                         g4w20_baseline_race4_rc "Race" ///
+>               _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Week 20 Vote Choice (1=Trump, 0=Everything else)") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba3.rtf not found)
+(output written to taba3.rtf)
+
+. restore
+
+.         
+. * Table A4.
+. 
+. preserve
+
+.         * Col. 1. "Week 8 placebo" (Note that "w8_early" will appear in its own row in the final combined outpu
+> t but that it is a functionally similar regressor to "post_guilty" below.)
+. gen double w8_surveytime = g4w8_starttime + mdyhms(1,1,1960,0,0,0)
+(192,665 missing values generated)
+
+. format w8_surveytime %tc
+
+.         * Use when respondents started the survey and generate their percentile scores for how early they took 
+> it.
+. xtile w8_percent = w8_surveytime, nq(100)
+
+. gen w8_early = (w8_percent <= 40)
+
+. 
+. reg week_8_rc w8_early [aweight=g4w20_weight] if week_4_rc == 1, robust
+(sum of wgt is 1,302.4355963904)
+
+Linear regression                               Number of obs     =      1,678
+                                                F(1, 1676)        =       0.73
+                                                Prob > F          =     0.3939
+                                                R-squared         =     0.0011
+                                                Root MSE          =     .16649
+
+------------------------------------------------------------------------------
+             |               Robust
+   week_8_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    w8_early |  -.0111339   .0130562    -0.85   0.394     -.036742    .0144742
+       _cons |   .9759648   .0056212   173.62   0.000     .9649396      .98699
+------------------------------------------------------------------------------
+
+. eststo taba4_col1
+
+.         * Col. 2. "Imputing missing data."
+. replace post_guilty = 1 if week_20_rc == . & week_16_rc != .
+(971 real changes made)
+
+. replace week_20_rc = week_28_rc if week_20_rc == . & week_16_rc != .
+(350 real changes made)
+
+. replace week_20_rc = week_32_rc if week_20_rc == . & week_16_rc != .
+(90 real changes made)
+
+. 
+. reg week_20_rc post_guilty [aweight=g4w16_weight] if vote_if_trump_not_guilty == 1, robust
+(sum of wgt is 1,943.26563869123)
+
+Linear regression                               Number of obs     =      2,365
+                                                F(1, 2363)        =       0.41
+                                                Prob > F          =     0.5213
+                                                R-squared         =     0.0004
+                                                Root MSE          =     .25081
+
+------------------------------------------------------------------------------
+             |               Robust
+  week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |   .0107592   .0167725     0.64   0.521    -.0221311    .0436496
+       _cons |   .9252884   .0139664    66.25   0.000     .8979007    .9526761
+------------------------------------------------------------------------------
+
+. eststo taba4_col2
+
+.         * Col. 3. "IV model."
+.         * Use early survey timing as an instrument for itself.
+. generate double w4_surveytime = g4w4_starttime + mdyhms(1,1,1960,0,0,0)
+(192,505 missing values generated)
+
+. format w4_surveytime %tc
+
+. generate double w8_surveytime2 = g4w8_starttime + mdyhms(1,1,1960,0,0,0)
+(192,665 missing values generated)
+
+. format w8_surveytime2 %tc
+
+. generate double w12_surveytime = g4w12_starttime + mdyhms(1,1,1960,0,0,0)
+(192,747 missing values generated)
+
+. format w12_surveytime %tc
+
+. generate double w16_surveytime = g4w16_starttime + mdyhms(1,1,1960,0,0,0)
+(192,136 missing values generated)
+
+. format w16_surveytime %tc
+
+.         * Use when respondents started the survey and generate their percentile scores for how early they took 
+> it.
+. xtile w4_percent = w4_surveytime, nq(100)
+
+. gen w4_early = (w4_percent <= 40)
+
+. xtile w8_percent2 = w8_surveytime2, nq(100)
+
+. gen w8_early2 = (w8_percent2 <= 40)
+
+. xtile w12_percent = w12_surveytime, nq(100)
+
+. gen w12_early = (w12_percent <= 40)
+
+. xtile w16_percent = w16_surveytime, nq(100)
+
+. gen w16_early = (w16_percent <= 40)
+
+. 
+. gen instrument  = w4_early + w8_early2 + w12_early + w16_early
+
+. replace instrument = . if (w4_surveytime==.|w8_surveytime==.|w12_surveytime==.|w16_surveytime==.)
+(195,732 real changes made, 195,732 to missing)
+
+. 
+. ivregress 2sls week_20_rc (post_guilty = instrument) [aweight=g4w20_weight] if week_16_rc == 1, robust
+(sum of wgt is   8.2987e+02)
+
+Instrumental-variables 2SLS regression            Number of obs   =      1,010
+                                                  Wald chi2(1)    =       0.71
+                                                  Prob > chi2     =     0.4002
+                                                  Root MSE        =     .20433
+
+------------------------------------------------------------------------------
+             |               Robust
+  week_20_rc | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |   .0989087   .1175671     0.84   0.400    -.1315185     .329336
+       _cons |   .8976252   .0765711    11.72   0.000     .7475485    1.047702
+------------------------------------------------------------------------------
+Endogenous: post_guilty
+Exogenous:  instrument
+
+. eststo taba4_col3
+
+. predict yhat if e(sample)
+(option xb assumed; fitted values)
+(197,648 missing values generated)
+
+. gen resid = week_20_rc - yhat if e(sample)
+(197,648 missing values generated)
+
+. gen sq_resid = resid^2
+(197,648 missing values generated)
+
+. gen sq_total = (week_20_rc - r(mean))^2 if e(sample)
+(198,658 missing values generated)
+
+.         * Weighted R-sq:
+. sum week_20_rc [aweight=g4w20_weight] if e(sample)
+
+    Variable |     Obs      Weight        Mean   Std. dev.       Min        Max
+-------------+-----------------------------------------------------------------
+  week_20_rc |   1,010  829.869765     .957591   .2016201          0          1
+
+. scalar ybar = r(mean)
+
+. gen total_dev = (week_20_rc - ybar)^2 if e(sample)
+(197,648 missing values generated)
+
+. gen resid_dev = resid^2
+(197,648 missing values generated)
+
+.         * Sum of squares
+. sum total_dev [aweight=g4w20_weight] if e(sample)
+
+    Variable |     Obs      Weight        Mean   Std. dev.       Min        Max
+-------------+-----------------------------------------------------------------
+   total_dev |   1,010  829.869765    .0406104   .1845192   .0017985   .9169806
+
+. scalar ss_total = r(sum)
+
+. 
+. sum resid_dev [aweight=g4w20_weight] if e(sample)
+
+    Variable |     Obs      Weight        Mean   Std. dev.       Min        Max
+-------------+-----------------------------------------------------------------
+   resid_dev |   1,010  829.869765    .0417496   .1802475    .000012   .9930799
+
+. scalar ss_resid = r(sum)
+
+.         * R^2
+. display "R-squared = " 1 - ss_resid/ss_total
+R-squared = -.02805142
+
+.         *Combine.
+. esttab taba4_col1 taba4_col2 taba4_col3 using "taba4.rtf", ///
+>     replace ///
+>     title("Linear regression of week 20 vote choice on post-verdict respondents, among week 16 Trump supporters
+>  with robust standard errors. Weighted analysis.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>     varlabels(w8_early "Post-Guilty Verdict" ///
+>         post_guilty "Post-Guilty Verdict" ///
+>         _cons "Constant") ///
+>     varwidth(30) ///
+>     mtitles("Week 8 placebo" "Imputing missing data" "IV model") ///
+>     label ///
+>     compress ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba4.rtf not found)
+(output written to taba4.rtf)
+
+. restore
+
+. 
+. * Table A5.
+. 
+. preserve
+
+.         * Col. 1. "Week 4 Vote Choice."
+. reg week_4_rc post_guilty [aweight = g4w4_weight] if week_16_rc == 1, robust
+(sum of wgt is 1,356.26576542849)
+
+Linear regression                               Number of obs     =      1,748
+                                                F(1, 1746)        =       0.66
+                                                Prob > F          =     0.4184
+                                                R-squared         =     0.0004
+                                                Root MSE          =     .15352
+
+------------------------------------------------------------------------------
+             |               Robust
+   week_4_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |  -.0063201   .0078086    -0.81   0.418    -.0216353    .0089952
+       _cons |   .9793229   .0050042   195.70   0.000      .969508    .9891378
+------------------------------------------------------------------------------
+
+. eststo taba5_col1
+
+.         * Col. 2. "Week 8 Vote Choice."
+. reg week_8_rc post_guilty [aweight = g4w8_weight] if week_16_rc == 1, robust
+(sum of wgt is 1,388.63137641803)
+
+Linear regression                               Number of obs     =      1,751
+                                                F(1, 1749)        =       3.33
+                                                Prob > F          =     0.0681
+                                                R-squared         =     0.0046
+                                                Root MSE          =     .16814
+
+------------------------------------------------------------------------------
+             |               Robust
+   week_8_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |    .023057   .0126306     1.83   0.068    -.0017158    .0478297
+       _cons |   .9581052   .0115395    83.03   0.000     .9354725     .980738
+------------------------------------------------------------------------------
+
+. eststo taba5_col2       
+
+.         * Col. 3. "Week 12 Vote Choice."
+. reg week_12_rc post_guilty [aweight=g4w12_weight] if week_16_rc == 1, robust
+(sum of wgt is 1,276.00886735653)
+
+Linear regression                               Number of obs     =      1,556
+                                                F(1, 1554)        =       1.43
+                                                Prob > F          =     0.2314
+                                                R-squared         =     0.0013
+                                                Root MSE          =     .20267
+
+------------------------------------------------------------------------------
+             |               Robust
+  week_12_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ post_guilty |   .0147224   .0122968     1.20   0.231    -.0093977    .0388425
+       _cons |   .9490908   .0098182    96.67   0.000     .9298324    .9683492
+------------------------------------------------------------------------------
+
+. eststo taba5_col3
+
+.         * Combine.
+. esttab taba5_col1 taba5_col2 taba5_col3 using "taba5.rtf", ///
+>     replace ///
+>     title("Combined placebo tests of vote choice on post-verdict respondents, among week 16 Trump supporters wi
+> th robust standard errors. Weighted analysis.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>         varlabels(post_guilty "Post-Guilty Verdict" ///
+>                                 _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Week 4 Vote Choice" "Week 8 Vote Choice" "Week 12 Vote Choice") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba5.rtf not found)
+(output written to taba5.rtf)
+
+. restore
+
+. 
+. * Table A6. (Note that Table A6 is identical to column 1 of Table A4.)
+. 
+. * Table A7. (Note that Table A7 is identical to column 2 of Table A4.)
+. 
+. * Table A8. (Note that Table A8 is identical to column 3 of Table A4.)
+. 
+. * Table A9.
+. 
+. preserve
+
+. reg post_guilty i.g4w20_baseline_presvote20post_rc i.g4w20_baseline_pid7_rc i.g4w20_baseline_age4_rc i.g4w20_ba
+> seline_educ4_rc i.g4w20_baseline_race4_rc [aweight=g4w20_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,966.0243920962)
+
+Linear regression                               Number of obs     =      2,237
+                                                F(17, 2219)       =       3.39
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0319
+                                                Root MSE          =     .47049
+
+------------------------------------------------------------------------------------------------------
+                                     |               Robust
+                         post_guilty | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------------------------+----------------------------------------------------------------
+    g4w20_baseline_presvote20post_rc |
+    2020 Vote Choice = Donald Trump  |   .0352853   .0476722     0.74   0.459    -.0582015    .1287721
+                                     |
+              g4w20_baseline_pid7_rc |
+Party ID = Not very strong Democrat  |   .4165563   .1733721     2.40   0.016     .0765678    .7565448
+                      Lean Democrat  |   .0648869   .2677895     0.24   0.809    -.4602574    .5900312
+                        Independent  |   .1790883   .1776506     1.01   0.314    -.1692905    .5274671
+                    Lean Republican  |   .1148084   .1767002     0.65   0.516    -.2317066    .4613234
+         Not very strong Republican  |   .1578728   .1763438     0.90   0.371    -.1879433    .5036888
+                  Strong Republican  |   .1585713   .1754932     0.90   0.366    -.1855767    .5027194
+                           Not sure  |   .3659755   .2070323     1.77   0.077    -.0400217    .7719727
+                                     |
+              g4w20_baseline_age4_rc |
+                        Age = 30-44  |    .113222   .0900003     1.26   0.209    -.0632715    .2897156
+                              45-64  |    .081191   .0847294     0.96   0.338    -.0849662    .2473483
+                                65+  |  -.0117531   .0857299    -0.14   0.891    -.1798724    .1563661
+                                     |
+             g4w20_baseline_educ4_rc |
+     Education level = Some college  |   .0151115   .0361453     0.42   0.676    -.0557705    .0859936
+                       College grad  |  -.0387948    .041796    -0.93   0.353    -.1207582    .0431686
+                           Postgrad  |  -.1419798   .0519077    -2.74   0.006    -.2437726   -.0401871
+                                     |
+             g4w20_baseline_race4_rc |
+             Race/ethnicity = Black  |   -.072121   .1369778    -0.53   0.599     -.340739     .196497
+                           Hispanic  |   .0148868   .0571695     0.26   0.795    -.0972245    .1269981
+                              Other  |   .0293598   .0663002     0.44   0.658    -.1006572    .1593767
+                                     |
+                               _cons |    .429935   .1796076     2.39   0.017     .0777183    .7821516
+------------------------------------------------------------------------------------------------------
+
+. eststo taba9
+
+. 
+. esttab taba9 using "taba9.rtf", ///
+>     replace ///
+>     title("Linear regression of post-verdict response among week 16 Trump voters with robust standard errors, w
+> eighted") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>     varwidth(30) ///
+>     mtitles("Post-verdict response (binary), weighted") ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels label
+(file taba9.rtf not found)
+(output written to taba9.rtf)
+
+. restore
+
+. 
+. * Table A10.
+. 
+. preserve
+
+.         * Cols. 1–3. (Note that the below table includes rows omitted from the main text. Here, percentages are
+>  the rows of interest.)
+. asdoc tab reported_change_rc actual_change [aweight=g4w20_weight], row replace save(taba10_cols1to3.doc)
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+  Week 20: |
+       How |
+Conviction |
+   Changed |
+     Trump |
+   Support |          actual_change
+    (-2-2) |        -1          0          1 |     Total
+-----------+---------------------------------+----------
+        -2 | 1.5886423  678.70155          0 | 680.29019 
+           |      0.23      99.77       0.00 |    100.00 
+-----------+---------------------------------+----------
+        -1 | 2.1315493  88.216175  2.0875087 | 92.435233 
+           |      2.31      95.44       2.26 |    100.00 
+-----------+---------------------------------+----------
+         0 |  51.02005  1,477.411  26.024597 |1,554.4556 
+           |      3.28      95.04       1.67 |    100.00 
+-----------+---------------------------------+----------
+         1 |4.92711779  80.371151  .76422399 | 86.062493 
+           |      5.73      93.39       0.89 |    100.00 
+-----------+---------------------------------+----------
+         2 | 3.5777747  872.42134  29.757372 | 905.75649 
+           |      0.40      96.32       3.29 |    100.00 
+-----------+---------------------------------+----------
+     Total | 63.245134  3,197.121  58.633702 |     3,319 
+           |      1.91      96.33       1.77 |    100.00 
+Click to Open File:  taba10_cols1to3.doc
+
+.         * Col. 4. "Proportion of sample." (Note that the below table was combined manually with the above table
+>  in the main text for formatting flexibility.)
+. scalar row1_total = 680.29
+
+. scalar row2_total = 92.44
+
+. scalar row3_total = 1554.46
+
+. scalar row4_total = 86.06
+
+. scalar row5_total = 905.76
+
+. scalar total_sample = 3319
+
+. 
+. scalar prop_row1 = row1_total / total_sample
+
+. scalar prop_row2 = row2_total / total_sample
+
+. scalar prop_row3 = row3_total / total_sample
+
+. scalar prop_row4 = row4_total / total_sample
+
+. scalar prop_row5 = row5_total / total_sample
+
+. 
+. clear
+
+. set obs 5
+Number of observations (_N) was 0, now 5.
+
+. 
+. gen str20 category = ""
+(5 missing values generated)
+
+. gen proportion = .
+(5 missing values generated)
+
+. 
+. replace category = "Much less likely" in 1
+(1 real change made)
+
+. replace category = "Somewhat less likely" in 2
+(1 real change made)
+
+. replace category = "No change" in 3
+(1 real change made)
+
+. replace category = "Somewhat more likely" in 4
+(1 real change made)
+
+. replace category = "Much more likely" in 5
+(1 real change made)
+
+. 
+. replace proportion = `=prop_row1' in 1
+(1 real change made)
+
+. replace proportion = `=prop_row2' in 2
+(1 real change made)
+
+. replace proportion = `=prop_row3' in 3
+(1 real change made)
+
+. replace proportion = `=prop_row4' in 4
+(1 real change made)
+
+. replace proportion = `=prop_row5' in 5
+(1 real change made)
+
+. 
+. asdoc list category proportion, replace save(taba10_col4.doc)
+
+     +---------------------------------+
+     |             category   propor~n |
+     |---------------------------------|
+  1. |     Much less likely   .2049684 |
+  2. | Somewhat less likely   .0278518 |
+  3. |            No change   .4683519 |
+  4. | Somewhat more likely   .0259295 |
+  5. |     Much more likely   .2729015 |
+     +---------------------------------+
+Click to Open File:  taba10_col4.doc
+
+. restore
+
+. 
+. * Table A11.
+. 
+. preserve
+
+.         * Recode to omit negative values for regression.
+. recode reported_change_rc (-2 = 1) (-1 = 2) (0 = 3) (1 = 4) (2 = 5)
+(4,042 changes made to reported_change_rc)
+
+. label define reported_change_rc_lab 1 "Much less likely" 2 "Somewhat less likely" 3 "No change" 4 "Somewhat mor
+> e likely" 5 "Much more likely"
+
+. label values reported_change_rc reported_change_rc_lab
+
+. 
+. reg week_20_rc i.reported_change_rc [aweight=g4w20_weight], robust
+(sum of wgt is 3,230.84203172365)
+
+Linear regression                               Number of obs     =      3,869
+                                                F(4, 3864)        =    4024.65
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.5113
+                                                Root MSE          =     .34507
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+           week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+----------------------+----------------------------------------------------------------
+   reported_change_rc |
+Somewhat less likely  |   .2407687    .086888     2.77   0.006      .070418    .4111194
+           No change  |   .2857201   .0174975    16.33   0.000     .2514149    .3200253
+Somewhat more likely  |   .4949249   .0854733     5.79   0.000     .3273479    .6625018
+    Much more likely  |   .9599958   .0076221   125.95   0.000      .945052    .9749396
+                      |
+                _cons |   .0024972   .0015003     1.66   0.096    -.0004442    .0054386
+---------------------------------------------------------------------------------------
+
+. eststo taba11
+
+. 
+. esttab taba11 using "taba11.rtf", ///
+>     replace ///
+>     title("Linear regression showing the correlation between reported change in support for Donald Trump and vo
+> te choice, among full sample with robust standard errors. Weighted analysis. Excluded are respondents saying th
+> e conviction made them 'much less likely' to vote for Donald Trump.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>         varlabels(i.reported_change_rc "Reported Change" _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Week 20 Vote") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba11.rtf not found)
+(output written to taba11.rtf)
+
+. restore
+
+. 
+. * Table A12.
+. 
+. preserve
+
+.         * Cols. 2–8. "# Surveys Supporting Trump (out of 5)."
+. asdoc tab voterstatus weeks_support_trump, col nofreq replace save(taba12_cols2to8.doc)
+
+                      |                        weeks_support_trump
+          voterstatus |         0          1          2          3          4          5 |     Total
+----------------------+------------------------------------------------------------------+----------
+Conditional Trump Sup |      0.84      15.57      11.06      12.63       6.29       6.03 |      4.26 
+Unconditional Trump S |      1.33      33.20      73.37      82.36      91.37      92.36 |     35.91 
+        Everyone else |     97.84      51.23      15.58       5.01       2.34       1.61 |     59.83 
+----------------------+------------------------------------------------------------------+----------
+                Total |    100.00     100.00     100.00     100.00     100.00     100.00 |    100.00 
+Click to Open File:  taba12_cols2to8.doc
+
+.         * Col. 1. "Average % weeks." (Note that the below table was combined manually with the above table in t
+> he main text for formatting flexibility.)
+. collapse (mean) avg_weeks_support_trump = prop_weeks_trump, by(voterstatus)
+
+. asdoc list voterstatus avg_weeks_support_trump, replace save(taba12_col1.doc)
+
+     +------------------------------------------+
+     |                   voterstatus   avg_we~p |
+     |------------------------------------------|
+  1. |   Conditional Trump Supporter   .7588346 |
+  2. | Unconditional Trump Supporter     .96412 |
+  3. |                 Everyone else    .034116 |
+  4. |                             .   .3589112 |
+     +------------------------------------------+
+Click to Open File:  taba12_col1.doc
+
+. restore
+
+. 
+. * Table A13.
+. 
+. preserve
+
+. reg conflicted_voters i.g4w20_baseline_presvote20post_rc i.g4w20_baseline_pid7_rc i.g4w20_baseline_age4_rc i.g4
+> w20_baseline_educ4_rc i.g4w20_baseline_race4_rc [aweight=g4w20_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,966.0243920962)
+
+Linear regression                               Number of obs     =      2,237
+                                                F(17, 2219)       =       2.70
+                                                Prob > F          =     0.0002
+                                                R-squared         =     0.1168
+                                                Root MSE          =     .30452
+
+------------------------------------------------------------------------------------------------------
+                                     |               Robust
+                   conflicted_voters | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------------------------+----------------------------------------------------------------
+    g4w20_baseline_presvote20post_rc |
+    2020 Vote Choice = Donald Trump  |  -.0370886    .030866    -1.20   0.230    -.0976178    .0234407
+                                     |
+              g4w20_baseline_pid7_rc |
+Party ID = Not very strong Democrat  |   .3005456     .18052     1.66   0.096    -.0534602    .6545515
+                      Lean Democrat  |  -.1831537   .1481796    -1.24   0.217    -.4737389    .1074315
+                        Independent  |  -.0799574   .1386692    -0.58   0.564    -.3518923    .1919776
+                    Lean Republican  |  -.0893584   .1382358    -0.65   0.518    -.3604434    .1817265
+         Not very strong Republican  |  -.0911535   .1375316    -0.66   0.508    -.3608575    .1785506
+                  Strong Republican  |  -.1320186   .1361831    -0.97   0.332    -.3990782     .135041
+                           Not sure  |    .387855   .2440487     1.59   0.112    -.0907326    .8664426
+                                     |
+              g4w20_baseline_age4_rc |
+                        Age = 30-44  |  -.0154533   .0630772    -0.24   0.806    -.1391498    .1082432
+                              45-64  |  -.0883986   .0586175    -1.51   0.132    -.2033495    .0265523
+                                65+  |  -.0772633   .0599575    -1.29   0.198    -.1948421    .0403155
+                                     |
+             g4w20_baseline_educ4_rc |
+     Education level = Some college  |  -.0272265   .0249311    -1.09   0.275    -.0761172    .0216642
+                       College grad  |  -.0020926   .0275857    -0.08   0.940    -.0561891    .0520039
+                           Postgrad  |  -.0635416    .026838    -2.37   0.018    -.1161718   -.0109113
+                                     |
+             g4w20_baseline_race4_rc |
+             Race/ethnicity = Black  |   .1361753   .1727328     0.79   0.431    -.2025595    .4749101
+                           Hispanic  |  -.0631951    .034969    -1.81   0.071    -.1317705    .0053803
+                              Other  |   .0112474   .0445343     0.25   0.801    -.0760858    .0985806
+                                     |
+                               _cons |   .3189862   .1403029     2.27   0.023     .0438475    .5941248
+------------------------------------------------------------------------------------------------------
+
+. eststo taba13
+
+. 
+. esttab taba13 using "taba13.rtf", ///
+>     replace ///
+>     title("Linear regression of conflicted voter status on demographic correlates, among week 16 Trump voters w
+> ith robust standard errors. Weighted analysis.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>     varwidth(30) ///
+>     mtitles("Conditional voter (binary), weighted") ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels label
+(file taba13.rtf not found)
+(output written to taba13.rtf)
+
+. restore
+
+. 
+. * Table A14.
+. 
+. preserve
+
+.         * Recode prediction variable, but drop DK responses.
+. recode g4w16_trump_convicted_manhattan (1=1) (2=0) (3=.) (*=.), gen(week16_p_nodk)
+(4,258 differences between g4w16_trump_convicted_manhattan and week16_p_nodk)
+
+. label var week16_p_nodk "Do you think Donald Trump will be convicted? (Week 16 binary)"
+
+.         * Col. 1. "Week 20 Vote Choice."
+. reg week_20_rc post_guilty##i.week16_p_nodk [aweight=g4w20_weight] if week_16_rc==1, robust
+(sum of wgt is 1,143.2670611066)
+
+Linear regression                               Number of obs     =      1,376
+                                                F(3, 1372)        =       1.70
+                                                Prob > F          =     0.1647
+                                                R-squared         =     0.0134
+                                                Root MSE          =     .20151
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+               week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+--------------------------+----------------------------------------------------------------
+            1.post_guilty |   .0272485   .0231188     1.18   0.239    -.0181036    .0726006
+          1.week16_p_nodk |  -.0499601   .0491336    -1.02   0.309    -.1463451     .046425
+                          |
+post_guilty#week16_p_nodk |
+                     1 1  |   .0229485    .052747     0.44   0.664     -.080525     .126422
+                          |
+                    _cons |   .9499614   .0211259    44.97   0.000     .9085188    .9914041
+-------------------------------------------------------------------------------------------
+
+. eststo taba14_col1
+
+.         * Col. 2. "Week 4 Vote Choice."
+. reg week_4_rc post_guilty##i.week16_p_nodk [aweight = g4w4_weight] if week_16_rc==1, robust
+(sum of wgt is 897.6911066700791)
+
+Linear regression                               Number of obs     =      1,127
+                                                F(3, 1123)        =       1.40
+                                                Prob > F          =     0.2414
+                                                R-squared         =     0.0033
+                                                Root MSE          =     .15059
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+                week_4_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+--------------------------+----------------------------------------------------------------
+            1.post_guilty |  -.0097473   .0104006    -0.94   0.349     -.030154    .0106594
+          1.week16_p_nodk |  -.0218627   .0175039    -1.25   0.212    -.0562066    .0124812
+                          |
+post_guilty#week16_p_nodk |
+                     1 1  |   .0085437   .0234566     0.36   0.716      -.03748    .0545674
+                          |
+                    _cons |   .9865558    .005188   190.16   0.000     .9763766    .9967351
+-------------------------------------------------------------------------------------------
+
+. eststo taba14_col2
+
+.         * Col. 3. "Week 8 Vote Choice."
+. reg week_8_rc post_guilty##i.week16_p_nodk [aweight = g4w8_weight] if week_16_rc==1, robust
+(sum of wgt is 913.8017657644514)
+
+Linear regression                               Number of obs     =      1,130
+                                                F(3, 1126)        =       1.00
+                                                Prob > F          =     0.3920
+                                                R-squared         =     0.0057
+                                                Root MSE          =      .1652
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+                week_8_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+--------------------------+----------------------------------------------------------------
+            1.post_guilty |   .0200068   .0213147     0.94   0.348    -.0218142    .0618277
+          1.week16_p_nodk |   -.016855   .0299247    -0.56   0.573    -.0755695    .0418594
+                          |
+post_guilty#week16_p_nodk |
+                     1 1  |   .0084686   .0330121     0.26   0.798    -.0563036    .0732407
+                          |
+                    _cons |   .9644707   .0197985    48.71   0.000     .9256247    1.003317
+-------------------------------------------------------------------------------------------
+
+. eststo taba14_col3
+
+.         * Col. 4. "Week 12 Vote Choice."
+. reg week_12_rc post_guilty##i.week16_p_nodk [aweight=g4w12_weight] if week_16_rc==1, robust
+(sum of wgt is 828.8555885527173)
+
+Linear regression                               Number of obs     =        986
+                                                F(3, 982)         =       1.44
+                                                Prob > F          =     0.2306
+                                                R-squared         =     0.0074
+                                                Root MSE          =     .20114
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+               week_12_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+--------------------------+----------------------------------------------------------------
+            1.post_guilty |   .0126152   .0167552     0.75   0.452     -.020265    .0454954
+          1.week16_p_nodk |  -.0361088   .0333062    -1.08   0.279    -.1014684    .0292508
+                          |
+post_guilty#week16_p_nodk |
+                     1 1  |  -.0036734   .0411035    -0.09   0.929    -.0843343    .0769875
+                          |
+                    _cons |   .9604492   .0127185    75.52   0.000     .9354906    .9854078
+-------------------------------------------------------------------------------------------
+
+. eststo taba14_col4
+
+.         * Combine.
+. esttab taba14_col1 taba14_col2 taba14_col3 taba14_col4 using "taba14.rtf", ///
+>     replace ///
+>     title("Combined test and placebo tests of those responding after the guilty verdict interacted with week 16
+>  guilt expectation on vote choice, among week 16 Trump supporters with robust standard errors. Weighted analysi
+> s.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>         varlabels(1.post_guilty "Post-Guilty Verdict" ///
+>               1.week16_p_nodk "Expectation of Guilt" ///
+>               1.post_guilty#1.week16_p_nodk "Post-Guilty Verdict X Expectation of Guilt" ///
+>                                 _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Week 20 Vote Choice" "Week 4 Vote Choice" "Week 8 Vote Choice" "Week 12 Vote Choice") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba14.rtf not found)
+(output written to taba14.rtf)
+
+. restore
+
+. 
+. * Table A15.
+. 
+. preserve
+
+.         * Col. 1. "Week 20 Vote Choice."
+. reg week_20_rc post_guilty##i.conflicted_voters if vote_if_trump_not_guilty==1, robust
+
+Linear regression                               Number of obs     =      2,207
+                                                F(3, 2203)        =      28.08
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1370
+                                                Root MSE          =     .22049
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                   week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |    .011897   .0086268     1.38   0.168    -.0050206    .0288145
+          1.conflicted_voters |  -.2363158   .0518552    -4.56   0.000     -.338006   -.1346256
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |  -.1035812   .0676336    -1.53   0.126    -.2362135    .0290512
+                              |
+                        _cons |        .96   .0072843   131.79   0.000     .9457151    .9742849
+-----------------------------------------------------------------------------------------------
+
+. eststo taba15_col1
+
+.         * Col. 2. "Week 4 Vote Choice."
+. reg week_4_rc post_guilty##i.conflicted_voters if vote_if_trump_not_guilty==1, robust
+
+Linear regression                               Number of obs     =      1,817
+                                                F(3, 1813)        =      11.54
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0736
+                                                Root MSE          =     .18921
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                    week_4_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |  -.0043117   .0073776    -0.58   0.559    -.0187811    .0101577
+          1.conflicted_voters |  -.1881301   .0429802    -4.38   0.000    -.2724259   -.1038342
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |   .0105713    .062632     0.17   0.866    -.1122672    .1334097
+                              |
+                        _cons |   .9793388   .0052851   185.30   0.000     .9689733    .9897044
+-----------------------------------------------------------------------------------------------
+
+. eststo taba15_col2
+
+.         * Col. 3. "Week 8 Vote Choice."
+. reg week_8_rc post_guilty##i.conflicted_voters if vote_if_trump_not_guilty==1, robust
+
+Linear regression                               Number of obs     =      1,823
+                                                F(3, 1819)        =       8.40
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0491
+                                                Root MSE          =     .18101
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                    week_8_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |   .0067203   .0074954     0.90   0.370    -.0079801    .0214207
+          1.conflicted_voters |  -.1565526   .0405605    -3.86   0.000    -.2361027   -.0770025
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |    .045123   .0549886     0.82   0.412    -.0627245    .1529705
+                              |
+                        _cons |   .9737569   .0059476   163.72   0.000     .9620921    .9854217
+-----------------------------------------------------------------------------------------------
+
+. eststo taba15_col3
+
+.         * Col. 4. "Week 12 Vote Choice."
+. reg week_12_rc post_guilty##i.conflicted_voters if vote_if_trump_not_guilty==1, robust
+
+Linear regression                               Number of obs     =      1,617
+                                                F(3, 1613)        =      17.74
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0937
+                                                Root MSE          =     .24984
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                   week_12_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |    .006034   .0112916     0.53   0.593    -.0161137    .0281817
+          1.conflicted_voters |  -.2485361   .0498977    -4.98   0.000    -.3464073   -.1506649
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |  -.0281711   .0723839    -0.39   0.697    -.1701476    .1138054
+                              |
+                        _cons |   .9496855   .0086785   109.43   0.000     .9326632    .9667079
+-----------------------------------------------------------------------------------------------
+
+. eststo taba15_col4
+
+.         * Combine.
+. esttab taba15_col1 taba15_col2 taba15_col3 taba15_col4 using "taba15.rtf", ///
+>     replace ///
+>     title("Combined test and placebo tests of conditional Trump supporters on vote choice among week 16 Trump s
+> upporters with robust standard errors. Unweighted analysis.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>         varlabels(1.post_guilty "Post-Guilty Verdict" ///
+>               1.conflicted_voters "Conditional Supporter" ///
+>               1.post_guilty#1.conflicted_voters "Post-Guilty Verdict X Conditional Support" ///
+>                                 _cons "Constant")  ///
+>     varwidth(30) ///
+>         mtitles("Week 20 Vote Choice" "Week 4 Vote Choice" "Week 8 Vote Choice" "Week 12 Vote Choice") ///
+>     label ///
+>     compress      ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba15.rtf not found)
+(output written to taba15.rtf)
+
+. restore
+
+. 
+. * Table A16.
+. preserve
+
+. 
+. reg week_20_rc day345##i.conflicted_voters [aweight=g4w20_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,840.26404864619)
+
+Linear regression                               Number of obs     =      2,207
+                                                F(3, 2203)        =      11.38
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1146
+                                                Root MSE          =     .25155
+
+------------------------------------------------------------------------------------------
+                         |               Robust
+              week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------------+----------------------------------------------------------------
+                1.day345 |  -.0088957   .0173431    -0.51   0.608    -.0429063    .0251149
+     1.conflicted_voters |  -.2387687   .0811738    -2.94   0.003     -.397954   -.0795834
+                         |
+day345#conflicted_voters |
+                    1 1  |  -.0670896   .1018132    -0.66   0.510    -.2667494    .1325702
+                         |
+                   _cons |   .9602302   .0126086    76.16   0.000     .9355041    .9849562
+------------------------------------------------------------------------------------------
+
+. eststo taba16
+
+. 
+. esttab taba16 using "taba16.rtf", ///
+>     replace ///
+>     title("Among week 16 Trump supporters, effect of taking the survey post-guilty verdict on vote choice. Weig
+> hted analysis. Reduced form replacing week 20 survey time with week 16 survey time to account for selection int
+> o treatment. Robust standard errors in parentheses.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>     varlabels(1.day345 "Late Survey Taker (Week 16)" ///
+>               1.conflicted_voters "Conditional Supporter" ///
+>               1.day345#1.conflicted_voters "Late Survey Taker X Conditional Support" ///
+>               _cons "Constant") ///
+>     varwidth(30) ///
+>         mtitles("Week 20 Vote Choice, weighted") ///
+>     label ///
+>     compress ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba16.rtf not found)
+(output written to taba16.rtf)
+
+. restore
+
+. 
+. * Table A17. (Note that this table was computed directly in the Stata console and input manually in the main te
+> xt for formatting flexibility.)
+. 
+. preserve
+
+.         * Col. 1. "Week 4."
+. asdoc tab voterstatus took_week_4 [aweight= g4w4_weight], row nofreq replace save(taba17_col1.doc)
+
+                      |   Week 4 Respondent
+          voterstatus |         0          1 |     Total
+----------------------+----------------------+----------
+Conditional Trump Sup |     22.62      77.38 |    100.00 
+Unconditional Trump S |     14.38      85.62 |    100.00 
+        Everyone else |     34.28      65.72 |    100.00 
+----------------------+----------------------+----------
+                Total |     26.76      73.24 |    100.00 
+Click to Open File:  taba17_col1.doc
+
+.         * Col. 2. "Week 8."
+. asdoc tab voterstatus took_week_8 [aweight= g4w8_weight], row nofreq replace save(taba17_col2.doc)
+
+                      |   Week 8 Respondent
+          voterstatus |         0          1 |     Total
+----------------------+----------------------+----------
+Conditional Trump Sup |     15.69      84.31 |    100.00 
+Unconditional Trump S |      8.80      91.20 |    100.00 
+        Everyone else |     30.14      69.86 |    100.00 
+----------------------+----------------------+----------
+                Total |     22.12      77.88 |    100.00 
+Click to Open File:  taba17_col2.doc
+
+.         * Col. 3. "Week 12."
+. asdoc tab voterstatus took_week_12 [aweight= g4w12_weight], row nofreq replace save(taba17_col3.doc)
+
+                      |  Week 12 Respondent
+          voterstatus |         0          1 |     Total
+----------------------+----------------------+----------
+Conditional Trump Sup |     19.80      80.20 |    100.00 
+Unconditional Trump S |     11.54      88.46 |    100.00 
+        Everyone else |     28.83      71.17 |    100.00 
+----------------------+----------------------+----------
+                Total |     22.50      77.50 |    100.00 
+Click to Open File:  taba17_col3.doc
+
+.         * Col. 4. "Week 20."
+. asdoc tab voterstatus took_week_20 [aweight= g4w20_weight], row nofreq replace save(taba17_col4.doc)
+
+                      |  Week 20 Respondent
+          voterstatus |         0          1 |     Total
+----------------------+----------------------+----------
+Conditional Trump Sup |      9.55      90.45 |    100.00 
+Unconditional Trump S |      6.02      93.98 |    100.00 
+        Everyone else |     26.86      73.14 |    100.00 
+----------------------+----------------------+----------
+                Total |     19.12      80.88 |    100.00 
+Click to Open File:  taba17_col4.doc
+
+.         * Col. 5. "Week 24."
+. asdoc tab voterstatus took_week_24 [aweight = g4w16_weight], row nofreq replace save(taba17_col5.doc)
+
+                      |  Week 24 Respondent
+          voterstatus |         0          1 |     Total
+----------------------+----------------------+----------
+Conditional Trump Sup |     53.37      46.63 |    100.00 
+Unconditional Trump S |     38.85      61.15 |    100.00 
+        Everyone else |     46.54      53.46 |    100.00 
+----------------------+----------------------+----------
+                Total |     44.46      55.54 |    100.00 
+Click to Open File:  taba17_col5.doc
+
+.         * Col. 6. "Week 28."
+. asdoc tab voterstatus took_week_28 [aweight= g4w28_weight], row nofreq replace save(taba17_col6.doc)
+
+                      |  Week 28 Respondent
+          voterstatus |         0          1 |     Total
+----------------------+----------------------+----------
+Conditional Trump Sup |     14.34      85.66 |    100.00 
+Unconditional Trump S |      6.98      93.02 |    100.00 
+        Everyone else |     27.65      72.35 |    100.00 
+----------------------+----------------------+----------
+                Total |     20.19      79.81 |    100.00 
+Click to Open File:  taba17_col6.doc
+
+. restore
+
+. 
+. * Table A18.
+. 
+. preserve
+
+. replace post_guilty= 1 if week_20_rc == . & week_16_rc !=.
+(971 real changes made)
+
+. replace week_20_rc = week_24_rc if week_20_rc == . & week_16_rc !=.
+(223 real changes made)
+
+. replace week_20_rc = week_28_rc if week_20_rc == . & week_16_rc !=.
+(166 real changes made)
+
+. replace week_20_rc = week_32_rc if week_20_rc == . & week_16_rc !=.
+(68 real changes made)
+
+. 
+. reg week_20_rc post_guilty##i.conflicted_voters [aweight=g4w16_weight] if vote_if_trump_not_guilty==1, robust
+(sum of wgt is 1,955.16736630566)
+
+Linear regression                               Number of obs     =      2,371
+                                                F(3, 2367)        =      12.01
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.0922
+                                                Root MSE          =     .24151
+
+-----------------------------------------------------------------------------------------------
+                              |               Robust
+                   week_20_rc | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+------------------------------+----------------------------------------------------------------
+                1.post_guilty |   .0084092   .0153915     0.55   0.585     -.021773    .0385915
+          1.conflicted_voters |  -.2908931    .072461    -4.01   0.000    -.4329868   -.1487995
+                              |
+post_guilty#conflicted_voters |
+                         1 1  |   .0736431   .0875794     0.84   0.401    -.0980972    .2453833
+                              |
+                        _cons |   .9530368   .0124329    76.65   0.000     .9286564    .9774173
+-----------------------------------------------------------------------------------------------
+
+. eststo taba18
+
+. 
+. esttab taba18 using "taba18.rtf", ///
+>     replace ///
+>     title("Among Week 16 Trump supporters, linear regression of week 20 vote choice on post-verdict respondents
+>  interacted with conditional Trump support. Weighted analysis. Missing respondents for Week 20 are imputed base
+> d on their week 24, 28 or 32 responses.") ///
+>     b(%9.3f) se(%9.3f) star(* 0.10 ** 0.05 *** 0.01) ///
+>     stats(N r2, fmt(%9.0f %9.3f)) ///
+>     varlabels(1.post_guilty "Post-Guilty Verdict" ///
+>               1.conflicted_voters "Conditional Supporter Status" ///
+>               1.post_guilty#1.conflicted_voters "Post-Guilty Verdict X Conditional Support" ///
+>               _cons "Constant") ///
+>     varwidth(30) ///
+>         mtitles("Week 20 Vote Choice, weighted") ///
+>     label ///
+>     compress ///
+>     nonumber nogaps noomitted nobaselevels
+(file taba18.rtf not found)
+(output written to taba18.rtf)
+
+. restore
+
+. 
+end of do-file
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jdw223/Dropbox/S_YaleYouGov2024ElectionPanel/12_Research Papers/CampaignEventsExpectations/ps
+> rm_replication/psrm_lockhart_etal.log
+  log type:  text
+ closed on:   5 Jan 2026, 13:49:28
+-----------------------------------------------------------------------------------------------------------------
